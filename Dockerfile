@@ -1,16 +1,18 @@
 FROM node:10-alpine
+WORKDIR /app
 
 ENV NODE_ENV production
-ENV storage__active s3
 
 RUN apk add --no-cache su-exec
-RUN npm install ghost-cli -g
 
-RUN mkdir /app; \
-    chown node:node /app; \
-    su-exec node ghost install --db=sqlite3 --no-prompt --no-stack --no-setup --dir /app;
+RUN chown node:node /app; \
+    npm install ghost-cli -g; \
+    su-exec node ghost install --db=sqlite3 --no-prompt --no-stack --no-setup
 
-RUN npm install ghost-storage-adapter-s3 --prefix /app/current/content/adapters/storage/s3; \
-    mv /app/current/content/adapters/storage/s3/node_modules/ghost-storage-adapter-s3/* /app/current/content/adapters/storage/s3/
+ADD config.json /app
 
-CMD ["node", "/app/current/index.js"]
+RUN npm install ghost-storage-adapter-s3 --prefix current/content/adapters/storage/s3; \
+    mv current/content/adapters/storage/s3/node_modules/ghost-storage-adapter-s3/* current/content/adapters/storage/s3/; \
+    mv config.json config.$NODE_ENV.json
+
+CMD ["node", "current/index.js"]
