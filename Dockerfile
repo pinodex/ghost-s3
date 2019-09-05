@@ -15,4 +15,5 @@ RUN npm install ghost-storage-adapter-s3 --prefix current/content/adapters/stora
     mv current/content/adapters/storage/s3/node_modules/ghost-storage-adapter-s3/* current/content/adapters/storage/s3/; \
     mv config.json config.$NODE_ENV.json
 
+EXPOSE 2368
 CMD ["node", "current/index.js"]
